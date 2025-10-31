@@ -5,7 +5,6 @@ import br.dev.luizmachado.urlShortener.entities.UrlEntity;
 import br.dev.luizmachado.urlShortener.exception.UrlNotFoundException;
 import br.dev.luizmachado.urlShortener.repositories.UrlRepository;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
