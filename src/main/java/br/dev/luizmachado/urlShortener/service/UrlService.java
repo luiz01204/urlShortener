@@ -12,13 +12,11 @@ import java.time.LocalDateTime;
 @Service
 public class UrlService {
 
-    @Autowired
     private final UrlRepository urlRepository;
 
     public UrlService(UrlRepository urlRepository) {
         this.urlRepository = urlRepository;
     }
-
 
     public UrlEntity save(UrlRequest urlRequest) {
         String id;
