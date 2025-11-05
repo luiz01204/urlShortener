@@ -24,6 +24,6 @@ public class UrlEntity implements Serializable {
 
     private  String fullUrl;
 
-    @Indexed(expireAfter = "3d")
+    @Indexed(expireAfter = "7d")
     private LocalDateTime expiresAt;
 }

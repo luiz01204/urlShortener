@@ -5,11 +5,10 @@ import br.dev.luizmachado.urlShortener.dto.UrlResponse;
 import br.dev.luizmachado.urlShortener.entities.UrlEntity;
 import br.dev.luizmachado.urlShortener.service.UrlService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.net.URI;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -29,11 +28,8 @@ public class UrlController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Void> redirectUrl(@PathVariable String id) {
+    public ResponseEntity<Map<String, String>> redirectUrl(@PathVariable String id) {
         UrlEntity url = urlService.getById(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(url.getFullUrl()));
-        return ResponseEntity.status(HttpStatus.FOUND).headers(headers).build();
+        return ResponseEntity.ok(Map.of("redirectTo", url.getFullUrl()));
     }
 }
-
