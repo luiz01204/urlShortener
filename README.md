@@ -1,102 +1,155 @@
-# 🚀 Encurtador de URL (urlshortener)
+# 🚀 Encurtador de URL (API)
 
-Um serviço de API REST para encurtamento de URL, simples e eficiente, construído com Spring Boot.
+Um serviço de **API REST** para encurtamento de URLs, simples, direto e eficiente — feito com **Spring Boot** e **MongoDB**.  
+👉 **Front-end do projeto:** [https://github.com/luiz01204/urlShortener-frontend](https://github.com/luiz01204/urlShortener-frontend)
 
-Este projeto permite aos usuários enviar uma URL longa e receber uma URL curta e única. Ao acessar a URL curta gerada, o usuário é redirecionado para a URL original.
+---
+
+## 🧠 Visão Geral
+
+Essa API permite enviar uma URL longa e receber uma versão encurtada.  
+Quando alguém acessa essa URL curta, o sistema redireciona automaticamente para o endereço original.
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
-O projeto foi construído usando o seguinte stack:
-
-* **Java 21**
-* **Spring Boot 3.5.7**
-* **Spring Web:** Para criar os endpoints da API REST.
-* **Spring Data MongoDB:** Para persistência de dados e consulta das URLs.
-* **Apache Commons Lang 3:** Utilizado para gerar os códigos alfanuméricos curtos.
-* **Maven:** Gerenciador de dependências.
+- **Java 21**
+- **Spring Boot 3.5.7**
+- **Spring Web** → Criação dos endpoints REST.
+- **Spring Data MongoDB** → Persistência e consultas das URLs.
+- **Apache Commons Lang 3** → Geração dos códigos curtos e aleatórios.
+- **Maven** → Gerenciador de dependências.
 
 ---
 
-## 🏁 Como Rodar
+## 🏁 Como Rodar o Projeto
 
-### Pré-requisitos
-
-Para rodar este projeto localmente, você vai precisar de:
-
-1.  **Java (JDK) 21** ou superior.
-2.  **Maven** 3.9+
-3.  **MongoDB** (um servidor rodando localmente ou um cluster na nuvem, como o MongoDB Atlas).
-
-### Passos
-
-1.  **Clone o repositório:**
-    ```bash
-    git clone [URL_DO_SEU_REPOSITORIO]
-    cd urlshortener
-    ```
-
-2.  **Configure o Banco de Dados:**
-    Abra (ou crie) o arquivo `src/main/resources/application.properties` e configure a string de conexão do seu MongoDB:
-
-    ```properties
-    # Configuração do MongoDB
-    spring.data.mongodb.uri=mongodb://localhost:27017/urlshortener
-    
-    # Porta padrão do servidor
-    server.port=8080
-    ```
-    *(Substitua pela sua string de conexão se for diferente)*
-
-3.  **Rode a aplicação:**
-    Use o plugin do Maven para iniciar o servidor:
-    ```bash
-    mvn spring-boot:run
-    ```
-
-A aplicação estará rodando em `http://localhost:8080`.
+### 🔧 Pré-requisitos
+Você precisa ter instalado:
+- **Java JDK 21** ou superior  
+- **Maven 3.9+**  
+- **MongoDB** local ou um cluster (ex: MongoDB Atlas)
 
 ---
 
-## 🤖 API Endpoints
+### 🚀 Passo a Passo
 
-Interaja com a API usando os endpoints abaixo.
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/luiz01204/urlShortener.git
+   cd urlShortener
+   ```
 
-### 1. Encurtar uma URL
+2. **Configure o banco de dados:**
+   No arquivo `src/main/resources/application.properties`:
 
-Cria um novo link curto para a URL longa enviada. O sistema verifica se o ID gerado já existe para evitar duplicatas.
+   ```properties
+   # Configuração do MongoDB
+   spring.data.mongodb.uri=mongodb://localhost:27017/urlshortener
 
-* **Método:** `POST`
-* **Endpoint:** `/shorten-url`
-* **Body (JSON):**
+   # Porta da API
+   server.port=8080
+   ```
 
-    ```json
-    {
-      "url": "[https://algum-site-muito-longo.com/com-varios-parametros?q=teste](https://algum-site-muito-longo.com/com-varios-parametros?q=teste)"
-    }
-    ```
+3. **Execute a aplicação:**
+   ```bash
+   mvn spring-boot:run
+   ```
 
-* **Resposta (Sucesso `200 OK`):**
-  *(Retorna a URL encurtada completa)*
+A API rodará em:  
+👉 `http://localhost:8080`
 
-    ```json
-    {
-      "shortUrl": "http://localhost:8080/aBcDe"
-    }
-    ```
+---
 
-### 2. Redirecionar para a URL longa
+## ⚙️ Endpoints
 
-Acessa a URL curta e redireciona (HTTP 302) para a URL original armazenada.
+### 🔹 1. Encurtar uma URL
+Cria uma nova URL curta e retorna o link encurtado.
 
-* **Método:** `GET`
-* **Endpoint:** `/{id}`
-* **Exemplo de Acesso (Navegador ou cURL):**
-  `http://localhost:8080/aBcDe`
+**Requisição:**  
+- **Método:** `POST`  
+- **Endpoint:** `/shorten-url`  
+- **Body:**
+  ```json
+  {
+    "url": "https://meu-site-grande.com/teste?param=123"
+  }
+  ```
 
-* **Resposta (Sucesso):**
-    * **Status Code:** `302 Found`
-    * **Header:** `Location: https://algum-site-muito-longo.com/...`
+**Resposta (200 OK):**
+```json
+{
+  "url": "http://localhost:8080/aBcDe"
+}
+```
 
-* **Resposta (Erro):**
-  Se o `id` ("aBcDe") não for encontrado no banco de dados:
-    * **Status Code:** `404 Not Found`
+> ✅ A API agora retorna **200 OK** (em vez de 302), garantindo compatibilidade com clientes HTTP e front-ends que consomem via Axios ou Fetch.
+
+---
+
+### 🔹 2. Redirecionar para a URL original
+Ao acessar a URL curta, a API retorna um **302 Found**, redirecionando automaticamente para o endereço original.
+
+**Requisição:**  
+- **Método:** `GET`  
+- **Endpoint:** `/{id}`  
+- **Exemplo:**  
+  ```
+  http://localhost:8080/aBcDe
+  ```
+
+**Resposta (Sucesso):**
+- **Status:** `200 Ok`  
+- **Header:**  
+  ```
+  redirectTo: https://meu-site-grande.com/teste?param=123
+  ```
+
+**Resposta (Erro):**
+- **Status:** `404 Not Found`
+- **Body (exemplo):**
+  ```json
+  {
+	"error": "URL não encontrada",
+	"status": 404,
+	"timestamp": "2025-11-05T14:30:17.990938361",
+	"message": "URL com o ID 'bUtDfiul' não foi encontrada."
+  }
+  ```
+
+---
+
+## 🧩 Estrutura do Projeto
+
+```
+src/
+ ├── main/
+ │   ├── java/br/dev/luizmachado/urlShortener/
+ │   │   ├── config/         # Configurações globais da aplicação
+ │   │   ├── controller/     # Endpoints REST
+ │   │   ├── service/        # Lógica de negócio
+ │   │   ├── repository/     # Integração com o banco de dados (MongoDB)
+ │   │   ├── dto/            # Objetos de transferência de dados (Request/Response)
+ │   │   ├── entities/       # Entidades que representam documentos do banco
+ │   │   └── exception/      # Tratamento global de exceções e classes customizadas
+ │   └── resources/
+ │       └── application.properties
+ └── test/
+     └── java/br/dev/luizmachado/urlShortener/
+
+```
+
+---
+
+## 🌐 Front-end
+
+O projeto front-end que consome essa API está disponível aqui:  
+👉 [https://github.com/luiz01204/urlShortener-frontend](https://github.com/luiz01204/urlShortener-frontend)
+
+---
+
+## 💡 Autor
+
+Desenvolvido por **Luiz Antônio dos Santos Machado**  
+📎 [GitHub](https://github.com/luiz01204) | [LinkedIn](https://www.linkedin.com/in/luiz-ant%C3%B4nio-dos-santos-machado-393bb314b/)
